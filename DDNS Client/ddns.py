@@ -13,6 +13,7 @@ import requests
 timestamp = f'%B %d %Y at %I:%M:%S %p'
 
 while True:
+    ip = requests.get('https://api.ipify.org').text
     config = configparser.ConfigParser()
     config.read('config.ini')
     for domains in config.sections():
@@ -20,9 +21,9 @@ while True:
             username = config[domains]["username"]
             password = config[domains]["password"]
             hostname = config[domains]["hostname"]
-            response = requests.post(f'https://{username}:{password}@domains.google.com/nic/update?hostname={hostname}')
+            response = requests.post(f'https://{username}:{password}@domains.google.com/nic/update?hostname={hostname}&myip={ip}')
             output = response.content.decode('utf-8')
             print(f'\n[{domains} - Response]\nStatus Code: {response.status_code}\nContent: {output}\nHostname: {hostname}\nTimestamp: {time.strftime(timestamp)}')
         except Exception as error:
             print(f'\n[{domains} - Error]\n{error}')
-    time.sleep(300)
+    time.sleep(3000)
